@@ -1,0 +1,279 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{AMAT 491 Assignment 3}
+\date{Nov 27 2017}
+\author{Ian McKenzie}
+
+\begin{document}
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\pagenumbering{arabic}
+
+% Question 1
+\section{}
+\subsection*{a.}
+Let's first find the formula for the Composite Simpson's Rule.
+\[Q_S^{c,n}(f)=\]
+\subsection*{b.}
+Now let's find the error estimate of this rule.
+\subsection*{c.}
+We now have our error estimate for the Composite Simpson's Rule as
+\[\int_a^bf(t)df =  Q_s^{c,n}(f) - \frac{(b-a)^5}{2880n^4}f^{(4)}(\theta)\]
+We want the absolute value of the error to be less than \(10^{-5}\)
+over the interval [0,2]. This means we want to find n such that
+\[\left|\frac{1}{90n^4}f^{(4)}(\theta)\right| \leq 10^{-5}\]
+We are told that the maximum value of \(|f^{(4)}(\theta)|\) is 9, thus
+we know
+\[\left|\frac{1}{90n^4}f^{(4)}(\theta)\right|
+\leq \left|\frac{1}{10n^4}\right| \leq 10^{-5}\]
+We simply solve for n and find \(n\geq10\), thus we need to
+perform at least 10 iterations to ensure accuracy. 
+
+
+
+% Question 2
+\section{}
+See \texttt{composite\_simpson.m} and \texttt{question2.m}.
+
+% Question 3
+\section{}
+To derive such a formula, we use Taylor theorem to write
+\begin{itemize}
+\item \(f(x_0+h) = f(x_0) + hf'(x_0) + \frac{h^2}{2}f''(x_0) +
+  \frac{h^3}{6}f'''(x_0) + \frac{h^4}{24}f''''(x_0) +
+  \frac{h^5}{120}f^{(5)}(\theta)\)
+\item \(f(x_0-h) = f(x_0) - hf'(x_0) + \frac{h^2}{2}f''(x_0) -
+  \frac{h^3}{6}f'''(x_0) + \frac{h^4}{24}f''''(x_0) -
+  \frac{h^5}{120}f^{(5)}(\theta)\)
+\item \(f(x_0+2h) = f(x_0) + 2hf'(x_0) + 2h^2f''(x_0) +
+  \frac{4}{3}h^3f'''(x_0) + \frac{2h^4}{3}f''''(x_0) +
+  \frac{4h^5}{15}f^{(5)}(\theta)\)
+\item \(f(x_0-2h) = f(x_0) - 2hf'(x_0) + 2h^2f''(x_0) -
+  \frac{4}{3}h^3f'''(x_0) + \frac{2h^4}{3}f''''(x_0) -
+  \frac{4h^5}{15}f^{(5)}(\theta)\)
+\end{itemize}
+Then we take a linear combination of the terms with coefficients
+\(a_1, a_2, a_3, a_4\) to find
+\begin{align*}
+  &a_1f(x_0+h) + a_2f(x_0-h) + a_3(fx_0+2h) + a_4f(x_0-2h)\\
+  &=(a_1+a_2+a_3+a_4)f(x_0)\\
+  &+ (a_1-a_2+2a_3-2a_4)hf'(x_0) + \\
+  &+(\frac{1}{2}a_1 + \frac{1}{2}a_2 + 2a_3 + 2a_4)h^2f''(x_0)\\
+  &+(\frac{1}{6}a_1 - \frac{1}{6}a_2 + \frac{4}{3}a_3 - \frac{4}{3}a_4)h^3f'''(x_0)\\
+  &+(\frac{1}{24}a_1 + \frac{1}{24}a_2 + \frac{2}{3}a_3 + \frac{2}{3}a_4)h^4f''''(x_0)\\
+  &+(\frac{1}{120}a_1 - \frac{1}{120}a_2 + \frac{4}{15}a_3 - \frac{4}{15}a_4)f^{(5)}(\theta)
+\end{align*}
+This leaves us with the system of equations
+\begin{align*}
+  (a_1+a_2+a_3+a_4) &= 0\\
+  (a_1-a_2+2a_3-2a_4)h &= 1\\
+  (\frac{1}{2}a_1 + \frac{1}{2}a_2 + 2a_3 + 2a_4)h^2 &= 0\\
+  (\frac{1}{6}a_1 - \frac{1}{6}a_2 + \frac{4}{3}a_3 - \frac{4}{3}a_4)h^3 &= 0\\
+\end{align*}
+Solving this via Matlab, we find \(a_1=\frac{2}{3h},
+a_2=\frac{-2}{3h}, a_3=\frac{-1}{12h}, a_4=\frac{1}{12h}\). This means
+that
+\[f'(x_0) = \frac{\frac{2}{3}f(x_0+h) - \frac{2}{3}f(x_0-h)
+  - \frac{1}{12}f(x_0+2h) + \frac{1}{12}f(x_0-2h)}{h}
++ \frac{-h^4}{30}f^{(5)}(\theta)\]
+And the convergence is on the order of \(h^4\).
+  
+
+% Question 4
+\section{}
+We want to find the error term of
+\[f''(x_0) \approx \frac{-f(x_0+3h)+4f(x_0+2h)-5f(x_0+h)+2f(x_0)}{h^2}\]
+First we find the Taylor Series approximation of 
+\begin{itemize}
+\item \(f(x_0+3h)\)
+\item \(f(x_0+2h)\)
+\item \(f(x_0+h)\)
+\end{itemize}
+For this problem we need to find four terms, with the fourth term
+being the error term.  Then we plug these into our formula above and
+find that
+\begin{align*}
+    -f(x_0+3h)+4f(x_0+2h)-5f(x_0+h)+2f(x_0)  &= (2-1+4-5)f(x_0) \\
+    &+ (-3+8-5)hf(x_0) \\
+    &+ (\frac{-9}{2}+8+\frac{-5}{2})h^2f''(x_0)\\
+    &+ (\frac{16}{3}+\frac{27}{6}+\frac{-5}{6})h^3f^{(3)}(x_0)\\
+    &+ (\frac{-81}{24}+\frac{8}{3}+\frac{-5}{24})h^4f^{(4)}(\theta)
+\end{align*}
+And thus
+\[\frac{-f(x_0+3h)+4f(x_0+2h)-5f(x_0+h)+2f(x_0)}{h^2} = f''(x_0) - \frac{11}{12}f^{(4)}(\theta)\]
+
+
+% Question 5
+\section{}
+We start with the original matrix and a pivot vector P to keep track
+of pivoting.
+\[
+A=
+\begin{bmatrix}
+  1 & 1 &-1 & 2\\
+  2 & 2 & 4 & 5\\
+  1 &-1 & 1 & 7\\
+  2 & 3 & 4 & 6
+\end{bmatrix}
+, \quad
+P=
+\begin{bmatrix}
+  1\\
+  2\\
+  3\\
+  4\\
+\end{bmatrix}
+\]
+First we look to pivot to put the maximum absolute value of the first
+column in the \(a_{1,1}\) position. This leaves us with
+\[
+\begin{bmatrix}
+  2 & 2 & 4 & 5\\
+  1 & 1 &-1 & 2\\
+  1 &-1 & 1 & 7\\
+  2 & 3 & 4 & 6
+\end{bmatrix}
+, \quad
+P=
+\begin{bmatrix}
+  2\\
+  1\\
+  3\\
+  4\\
+\end{bmatrix}
+\]
+Then we subtract half of the first row, from the second row, half of
+the first row from the third row, and one of the first row from the
+fourth row. This leaves us with zeros in the
+\(a_{2,1},a_{3,1}\&a_{4,1}\) positions. We need to keep track of our
+row operations, so we will utilize these zeros to track them for our L
+matrix. This means the diagonal and above corresponds to the U matrix,
+and below the diagonal (plus an identity matrix) corresponds to the L
+matrix.
+This leaves us with
+\[
+\begin{bmatrix}
+  2  &  2  &  4  &  5\\
+  1/2&  0  & -3  &-1/2\\
+  1/2& -2  & -1  & 9/2\\
+  1  &  1  &  0  &  1\\
+\end{bmatrix}
+\]
+The we switch the second row and the third row, and add half of the
+second row to the fourth row. This leaves us with
+\[
+\begin{bmatrix}
+  2  &  2  &  4  &  5\\
+  1/2& -2  & -1  & 9/2\\
+  1/2&  0  & -3  &-1/2\\
+  1  & -1/2& -1/2&13/4\\
+\end{bmatrix}
+, \quad
+P=
+\begin{bmatrix}
+  2\\
+  3\\
+  1\\
+  4\\
+\end{bmatrix}
+\]
+The last step is to subtract one-sixth of the third row from the forth
+row. We also convert the P vector to a P matrix which is the
+equivalent of the sum of our row operations. The final answer is
+\[
+L=
+\begin{bmatrix}
+  1  &  0  &  0  &  0\\
+  1/2&  1  &  0  &  0\\
+  1/2&  0  &  1  &  0\\
+  1  &-1/2 & 1/6 &  1
+\end{bmatrix}
+, \quad
+U=
+\begin{bmatrix}
+  2  &  2  &  4  &  5\\
+  0  & -2  & -1  & 9/2\\
+  0  &  0  & -3  &-1/2\\
+  0  &  0  &  0  &10/3\\
+\end{bmatrix}
+, \quad
+P =
+\begin{bmatrix}
+  0 & 1 & 0 & 0\\
+  0 & 0 & 1 & 0\\
+  1 & 0 & 0 & 0\\
+  0 & 0 & 0 & 1\\
+\end{bmatrix}
+\]
+where \(PA=LU\).\\
+We can now use this to solve a system \(Ax=b\) quite easily. We have
+\[
+b=
+\begin{bmatrix}
+  6\\
+  21\\
+  25\\
+  23
+\end{bmatrix}
+\]
+thus, we can simply perform \(y=L*(P*b)\) and \(x=Uy\) which is very
+easy to do on triangular matrices thanks to backward and forward
+substitution.  Saving some space, we have
+\[
+y=
+\begin{bmatrix}
+  21\\
+  29/2\\
+  -9/2\\
+  10
+\end{bmatrix}
+, \quad
+x=
+\begin{bmatrix}
+  2\\
+  -1\\
+  1\\
+  3
+\end{bmatrix}
+\]
+
+
+% Question 6
+\section{}
+\subsection*{a.}
+First let's find the LDL' factorization.
+\[
+L=
+\begin{bmatrix}
+  1  &  0  &  0  & 0\\
+  1/4&  1  &  0  & 0\\
+  1/4&-1/11&  1  & 0\\
+  1/4&-5/11&7/19 & 1
+\end{bmatrix}
+, \quad
+D=
+\begin{bmatrix}
+  4  &  0  &  0  &  0\\
+  0  &11/4 &  0  &  0\\
+  0  &  0  &19/11&  0\\
+  0  &  0  &  0  &56/19
+\end{bmatrix}
+\]
+\subsection*{b.}
+Now let's find the Choleskly factorization
+\[
+L=
+\begin{bmatrix}
+  2  & 0         & 0       & 0\\
+  1/2& 1985/1197 & 0       & 0\\
+  1/2& -409/2713 & 1309/996& 0\\
+  1/2& -1197/1588& 475/981 & 2546/1483
+\end{bmatrix}
+\]
+
+\end{document}
