@@ -1,1 +1,2 @@
 *.m linguist-language=Matlab
+*.tex linguist-vendored
